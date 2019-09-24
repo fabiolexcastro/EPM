@@ -8,27 +8,6 @@ rm(list = ls())
 options(scipen = 999,
         stringsAsFactors = FALSE)
 
-# Functions to use --------------------------------------------------------
-makeMean <- function(col){
-  # col <- 'd_1'
-  x <- tbl[,c('id_man', col)] %>% 
-    setNames(c('id_man', 'var')) %>% 
-    mutate(id_man = as.numeric(id_man),
-           var = as.numeric(var))
-  x <- inner_join(shp, x, by = c('IDMANZANA' = 'id_man')) %>% 
-    dplyr::select(IDMANZANA, COMUNA, NOMBRE, var)
-  x <- x %>% 
-    as.data.frame %>% 
-    dplyr::select(-geometry) %>% 
-    as_tibble %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarise(var = mean(var, na.rm = TRUE)) %>% 
-    ungroup()
-  y <- inner_join(com, x, by = c('COMUNA' = 'COMUNA'))
-  print('Done!')
-  return(y) 
-}
-
 # Load data ---------------------------------------------------------------
 shp <- st_read('../shp/base/bcs_manzanas_comunas.shp')
 com <- st_read('../shp/base/bcs_comunas_geo.shp') %>% 
