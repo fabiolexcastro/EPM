@@ -12,7 +12,7 @@ options(scipen = 999,
 shp <- st_read('../shp/base/bcs_manzanas_comunas.shp')
 com <- st_read('../shp/base/bcs_comunas_geo.shp') %>% 
   mutate(COMUNA = as.numeric(as.character(COMUNA)))
-tbl <- read_excel('../tbl/0916_percepcion.xlsx')
+tbl <- read_excel('../tbl/encuestas/0927_EPM_total.xlsx')
 tbl <- tbl[-1,]
 tbl <- tbl %>% 
   mutate(id_man = as.numeric(id_man))
@@ -51,7 +51,7 @@ m02 <- function(){
     dplyr::summarize(count = n()) %>% 
     ungroup() %>% 
     spread(b_4, count) %>% 
-    setNames(c('COMUNA', 'pie', 'cicl', 'bus', 'MIO', 'moto', 'taxicolec', 'taxi', 'tranp_inf', 'vpart')) %>% 
+    setNames(c('COMUNA', 'pie', 'cicl', 'bus', 'guala', 'MIO', 'moto', 'taxicolec', 'taxi', 'tranp_inf', 'vpart')) %>% 
     NAer() %>% 
     as_tibble()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))
@@ -71,9 +71,13 @@ m03 <- function(){
   rsl <- tbl %>% 
     dplyr::select(COMUNA, d_7) %>% 
     mutate(d_7 = as.numeric(d_7)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(d_7, na.rm = TRUE)) %>% 
-    ungroup()
+    group_by(COMUNA, d_7) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(d_7, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm03_infrasPeaton', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -86,10 +90,14 @@ m04 <- function(){
   print('Mapa 04')
   rsl <- tbl %>% 
     dplyr::select(COMUNA, d_13) %>% 
-    mutate(d_13 = as.numeric(d_13)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(d_13, na.rm = TRUE)) %>% 
-    ungroup()
+    mutate(d_7 = as.numeric(d_13)) %>% 
+    group_by(COMUNA, d_13) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(d_13, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm04_seguridadPeaton', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -103,9 +111,13 @@ m05 <- function(){
   rsl <- tbl %>% 
     dplyr::select(COMUNA, d_14) %>% 
     mutate(d_14 = as.numeric(d_14)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(d_14, na.rm = TRUE)) %>% 
-    ungroup()
+    group_by(COMUNA, d_14) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(d_14, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm05_accidentesPeaton', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -119,9 +131,13 @@ m06 <- function(){
   rsl <- tbl %>% 
     dplyr::select(COMUNA, d_17) %>% 
     mutate(d_17 = as.numeric(d_17)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(d_17, na.rm = TRUE)) %>% 
-    ungroup()
+    group_by(COMUNA, d_17) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(d_17, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm06_satisfaccionPeaton', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -139,9 +155,13 @@ m07 <- function(){
   rsl <- tbl %>% 
     dplyr::select(COMUNA, c_7) %>% 
     mutate(c_7 = as.numeric(c_7)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(c_7, na.rm = TRUE)) %>% 
-    ungroup()
+    group_by(COMUNA, c_7) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(c_7, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm07_infrasCiclista', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -155,9 +175,13 @@ m08 <- function(){
   rsl <- tbl %>% 
     dplyr::select(COMUNA, c_13) %>% 
     mutate(c_13 = as.numeric(c_13)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(c_13, na.rm = TRUE)) %>% 
-    ungroup()
+    group_by(COMUNA, c_13) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(c_13, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm08_seguridadCiclista', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -170,10 +194,14 @@ m09 <- function(){
   print('Mapa 09')
   rsl <- tbl %>% 
     dplyr::select(COMUNA, c_14) %>% 
-    mutate(c_13 = as.numeric(c_14)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(c_14, na.rm = TRUE)) %>% 
-    ungroup()
+    mutate(c_14 = as.numeric(c_14)) %>% 
+    group_by(COMUNA, c_14) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(c_14, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm09_seguaccidentesCiclista', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -187,9 +215,13 @@ m10 <- function(){
   rsl <- tbl %>% 
     dplyr::select(COMUNA, c_19) %>% 
     mutate(c_19 = as.numeric(c_19)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(c_19, na.rm = TRUE)) %>% 
-    ungroup()
+    group_by(COMUNA, c_19) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(c_19, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm10_calidadInfraestrCiclista', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -225,9 +257,13 @@ m12 <- function(){
   rsl <- tbl %>% 
     dplyr::select(COMUNA, f_1) %>% 
     mutate(f_1 = as.numeric(f_1)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(f_1, na.rm = TRUE)) %>% 
-    ungroup()
+    group_by(COMUNA, f_1) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(f_1, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm12_disposicionCaminar', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
@@ -241,9 +277,13 @@ m13 <- function(){
   rsl <- tbl %>% 
     dplyr::select(COMUNA, f_3) %>% 
     mutate(f_3 = as.numeric(f_3)) %>% 
-    group_by(COMUNA) %>% 
-    dplyr::summarize(avg = mean(f_3, na.rm = TRUE)) %>% 
-    ungroup()
+    group_by(COMUNA, f_3) %>% 
+    dplyr::summarize(count = n()) %>% 
+    ungroup() %>% 
+    spread(f_3, count) %>% 
+    setNames(c('COMUNA', paste0('v', 1:5))) %>% 
+    NAer() %>% 
+    retype()
   rsl <- inner_join(com, rsl, by = c('COMUNA'))  
   rsl <- as(rsl, 'Spatial')
   writeOGR(obj = rsl, dsn = '../shp/maps', layer = 'm13_disposicionBicicleta', driver = 'ESRI Shapefile', overwrite_layer = TRUE)
